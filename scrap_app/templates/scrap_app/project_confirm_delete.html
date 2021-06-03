@@ -1,0 +1,6 @@
+<h1>Are You Sure To Delete {{project.projects_name}} Project</h1><hr>
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value='Delete'>&nbsp;&nbsp;
+        <a href="/project_detail/">Cancle</a>
+    </form>

@@ -1,0 +1,56 @@
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/login.css'%}">
+  <!-- <script src="{%static '/js/login.js'%}"></script> -->
+  <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+  <meta content="width=device-width; initial-scale=1.0; maximum-scale=1.0;   user-scalable=0;" name="viewport">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
+  <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script> -->
+</head>
+<body>
+<div class="wrapper bg-white">
+    <div class="h2 text-center">Enter your login details</div>
+  <br>
+<!--    <div class="h4 text-muted text-center pt-2"> Touch to login</div>-->
+    <form class="pt-3"action="{%url 'login'%}"method="post">
+      {% csrf_token %}
+      {% if form.errors %}
+        <p1 style="color: red">Incorrect Inputs!!</p1>
+      {% endif %}
+      {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}" />
+        {% for field in form %}
+          <p>
+            {{ field.label_tag }}<br>
+            {{ field }}<br>
+            {% for error in field.errors %}
+              <p style="color: red">{{ error }}</p> 
+            {% endfor %}
+            {% if field.help_text %}
+              <p><small style="color: white">{{ field.help_text }}</small></p>
+            {% endif %}
+          </p>
+        {% endfor %}
+        <div class="d-flex align-items-start">
+            <div class="remember"> <label class="option text-muted"> Remember me <input type="radio" name="radio"> <span class="checkmark"></span> </label> </div>
+            </div> <button class="btn btn-block text-center my-3">Log in</button>
+        <!-- <div class="text-center pt-3 text-muted">Not a member? <a href="{% url 'register' %}">Sign up</a></div> -->
+    </form>
+
+  <p align = "center">Contact Admin in case you forget the password</p>
+</div>
+
+<footer>
+  <!-- {# <a class="weblink" href="#">Continue To Our Website..!</a> #} -->
+</footer>
+</body>
+</html>
+{% endblock %}

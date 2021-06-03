@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% load static %}
+
+<meta content="noindex, nofollow" name="robots">
+<!-- Include CSS File Here -->
+	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+	<meta content="width=device-width; initial-scale=1.0; maximum-scale=1.0;   user-scalable=0;" name="viewport">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="{%static 'css/emp_register.css'%}" >
+</head>
+<body>
+<!--	<button  type="button" class="btn btn-danger" onclick="window.location.href='{% url 'project_detail' %}'">Project Details</button>-->
+<div class="wrapper bg-white">
+    <div class="h2 text-center">Enter Project Details</div>
+<!--    <div class="h4 text-muted text-center pt-2"> Touch to enter details</div>-->
+    <!-- <br><h7> hour and time format :- hh:ss:ms</h7> -->
+    <form class="pt-3" method="post" action="{% url 'project' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+	        {% if form.errors %}
+			    {% for field in form %}
+					{% for error in field.errors %}
+			            <div class="alert alert-danger">
+			                <strong>{{ error|escape }}</strong>
+			            </div>
+			        {% endfor %}
+			    {% endfor %}
+		        {% for error in form.non_field_errors %}
+			        <div class="alert alert-danger">
+			            <strong>{{ error|escape }}</strong>
+			        </div>
+		        {% endfor %}
+		    {% endif %}
+		    {{form.as_p}} 
+            <button class="btn btn-block text-center my-3" action="submit"> Submit</button>
+    </form>
+	{% if user.is_authenticated %}
+        <button  class="btn btn-block text-center my-3"  onclick="window.location.href='{% url 'logout' %}'">Logout</button>
+	{% endif %}
+</div>
+</body>
+</html>

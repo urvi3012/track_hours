@@ -1,0 +1,37 @@
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Employee ID</th>
+        <th>Actual Developer Name</th>
+        <th>Screen Developer Name</th>
+        <th>Project Name</th>
+        <th>Project Hours</th>
+<!--        <th>Project Start Date</th>-->
+<!--        <th>Project End Date</th>-->
+<!--        <th>Expected Hours</th>-->
+        <th>Email</th>
+<!--          <th>Daily Hours</th>-->
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for project in project_list %}
+      <tr>
+        <!-- <td>{{employe.employee.id}}</td> -->
+        <td>{{project.id}}</td>
+        <td>{{project.actual_developer.full_name}}</td>
+        <td>{{project.developer_name}}</td>
+        <td>{{project.projects_name}}</td>
+<!--        <td>{{employe.project_start_date}}</td>-->
+<!--        <td>{{employe.project_end_date}}</td>-->
+        <td>{{project.project_hours}}</td>
+<!--        <td>{{employe.project_left_hrs}}</td>-->
+        <td>{{project.developer_email}}</td>
+        <td> <a href="#">Del</a></td>
+        <td> <a href="#">Edit</a></td>
+      </tr>
+
+      {% endfor %}
+
+    </tbody>
+  </table>

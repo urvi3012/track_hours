@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+  <title>Project Details</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+  <meta content="width=device-width; initial-scale=1.0; maximum-scale=1.0;   user-scalable=0;" name="viewport">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+  <script> $(document).ready( function () {
+    $('#myTable').DataTable();
+  } );</script>
+</head>
+<body>
+<!--{% if request.user.is_superuser %}-->
+<!--  <button  type="button" class="btn btn-danger" onclick="window.location.href='{% url 'project' %}'">Add Project</button >-->
+<!--  <button  type="button" class="btn btn-success" onclick="window.location.href='{% url 'register' %}'">User Register</button>-->
+<!--{% endif %}-->
+<!--<button  type="button" class="btn btn-primary" onclick="window.location.href='{% url 'logout' %}'">Logout</button>-->
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Protonshub Hour Tracker</a>
+    </div>
+    <ul class="nav navbar-nav">
+
+      <li class="active"><a href="#">Projects</a></li>
+<!--      <li><a href="#">Page 1</a></li>-->
+      {% if request.user.is_superuser %}
+      <li><a href="{% url 'user_detail' %}">Employees</a></li>
+      {% endif %}
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><span class="glyphicon glyphicon-user"></span>request.user.id.user_name</li>
+      <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  {% if request.user.is_superuser %}
+  <center><h2>Employee Project Details</h2>
+  <p>Here you get the details about the Projects:</p></center><br>
+  {% endif %}
+{% if not request.user.is_superuser %}
+  <center><h2>Your Project Details</h2></center>
+<!--  <p>Here you get the details about the Projects:</p></center>-->
+    <br>
+  {% endif %}
+
+
+
+    {% if request.user.is_superuser %}
+<h5>
+<label for="cycles">Billing Cycle:</label>
+  <select id="cycles">
+   <option value="0" selected>Billing Cycle</option>
+    {% for cycles in billing_cycles %}
+      <option value="{{cycles}}">{{cycles}}</option>
+   {% endfor %}
+</select>
+
+<label for="project">Project:</label>
+  <select id="project">
+   <option value="0" selected>Projects</option>
+    {% for project in project_name_list %}
+      <option value="{{project}}">{{project}}</option>
+   {% endfor %}
+</select>
+
+<label for="developer">Developer:</label>
+  <select id="developer">
+   <option value="0" selected>Developers</option>
+    {% for developer in developer_name_list %}
+      <option value="{{developer}}">{{developer}}</option>
+   {% endfor %}
+</select>
+
+<!--  <label for="actual_developer">Actual Developer:</label>-->
+<!--  <select id="actual_developer">-->
+<!--   <option value="0" selected>Actual Developer</option>-->
+<!--    {% for ac_dev in actual_developer %}-->
+<!--      <option value="{{ac_dev}}">{{ac_dev.first_name}}</option>-->
+<!--   {% endfor %}-->
+<!--</select>-->
+
+  {% endif %}
+
+</h5>
+<br>
+  {% if request.user.is_superuser %}
+  <a href = "{% url 'project' %}"><h5>+ Add Project</h5></a>
+<!--  <p>Here you get the details about the Projects:</p></center>-->
+    <br>
+  {% endif %}
+
+
+    <div id="project_table">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Sr no.</th>
+        {% if request.user.is_superuser %}
+        <th>Actual Developer Name</th>
+        <th>Screen Developer Name</th>
+        {% endif %}
+        <th>Project Name</th>
+        <th>Project Hours</th>
+<!--        <th>Project Start Date</th>-->
+<!--        <th>Project End Date</th>-->
+<!--        <th>Expected Hours</th>-->
+        {% if request.user.is_superuser %}
+        <th>Email</th>
+        {% endif %}
+<!--          <th>Daily Hours</th>-->
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for project in project_list %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <!-- <td>{{employe.employee.id}}</td> -->
+        {% if request.user.is_superuser %}
+<!--        <td>{{project.id}}</td>-->
+        <td>{{project.actual_developer.first_name}} {{project.actual_developer.last_name}}</td>
+        <td>{{project.developer_name}}</td>
+        {% endif %}
+
+        <td>{{project.projects_name}}</td>
+<!--        <td>{{employe.project_start_date}}</td>-->
+<!--        <td>{{employe.project_end_date}}</td>-->
+        <td>{{project.project_hours}}</td>
+<!--        <td>{{employe.project_left_hrs}}</td>-->
+        {% if request.user.is_superuser %}
+        <td>{{project.developer_email}}</td>
+        <td> <a href="/delete/{{ project.id }}">Del</a></td>
+        <td> <a href="/update/{{ project.id }}">Edit</a></td>
+        {% endif %}
+      </tr>
+
+      {% endfor %}
+    </tbody>
+  </table>
+        </div>
+</div>
+
+
+
+</body>
+
+
+
+<script type="text/javascript">
+  $(document).ready(function() {
+         $('#cycles').change(function(){
+             var cycles = $('#cycles').val();
+             var developer = $('#developer').val();
+             var project = $('#project').val();
+             if (cycles != 0) {
+             sortingRecentFiles(cycles,project, developer)
+             }
+         });
+          $('#developer').change(function(){
+             var developer = $('#developer').val();
+             var cycles = $('#cycles').val();
+             var project = $('#project').val();
+             if (developer != 0) {
+             sortingRecentFiles(cycles,project, developer)
+             }
+         }); $('#project').change(function(){
+             var project = $('#project').val();
+             var developer = $('#developer').val();
+             var cycles = $('#cycles').val();
+             if (project != 0) {
+             sortingRecentFiles(cycles,project, developer)
+             }
+         });
+      });
+
+      function sortingRecentFiles(billing, project, developer){
+         postdata = {billing:billing, project:project, developer:developer, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+         $.ajax({
+                url: "/dropdown/",
+                type: "POST",
+                data: postdata,
+                success: function(data) {
+                  $.unblockUI()
+                  if (data.status_code == 200){
+                  }
+                  else{
+                  }
+                }
+            });
+            }
+
+
+
+</script>
+
+
+
+</html>
