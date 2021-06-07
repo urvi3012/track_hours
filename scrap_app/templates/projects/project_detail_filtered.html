@@ -27,8 +27,8 @@
         <td>{{project.project_hours}}</td>
 <!--        <td>{{employe.project_left_hrs}}</td>-->
         <td>{{project.developer_email}}</td>
-        <td> <a href="#">Del</a></td>
-        <td> <a href="#">Edit</a></td>
+        <td> <a href="/delete/{{ project.id }}">Del</a></td>
+        <td> <a href="/update/{{ project.id }}">Edit</a></td>
       </tr>
 
       {% endfor %}

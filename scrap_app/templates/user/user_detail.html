@@ -41,8 +41,26 @@
 <div class="container">
   <center><h2>Employees</h2>
   <p>Here you get the details about the Users</p></center><br>
-  <p>User with id  1 is the super user</p></center><br>
-  
+
+
+<!--<label for="project">Project:</label>-->
+<!--  <select id="project">-->
+<!--   <option value="0" selected>Projects</option>-->
+<!--    {% for project in project_name_list %}-->
+<!--      <option value="{{project}}">{{project}}</option>-->
+<!--   {% endfor %}-->
+<!--</select>-->
+
+<label for="emp">Employee:</label>
+  <select id="emp">
+   <option value="0" selected>Employees</option>
+    {% for emp in employee_name_list %}
+      <option value="{{emp}}">{{emp}}</option>
+   {% endfor %}
+</select>
+
+
+
   <table class="table table-hover">
     <thead>
       <tr>
@@ -61,6 +79,8 @@
         <td>{{user.first_name}}</td>
         <td>{{user.last_name}}</td>
         <td>{{user.email}}</td>
+<td> <a href="/delete/{{ user.id }}">Del</a></td>
+        <td> <a href="/update/{{ user.id }}">Edit</a></td>
       </tr>
       {% endfor %}
     </tbody>
@@ -73,3 +93,38 @@
 
 </body>
 </html>
+
+
+
+<script type="text/javascript">
+  $(document).ready(function() {
+        $('#project').change(function(){
+             var project = $('#project').val();
+             var developer = $('#developer').val();
+             var cycles = $('#cycles').val();
+             if (project != 0) {
+             sortingRecentFiles(cycles,project, developer)
+             }
+         });
+      });
+
+      function sortingRecentFiles(billing, project, developer){
+         postdata = {project:project, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+         $.ajax({
+                url: "/dropdown_u/",
+                type: "POST",
+                data: postdata,
+                success: function(data) {
+                  $.unblockUI()
+                  if (data.status_code == 200){
+                  }
+                  else{
+                  }
+                }
+            });
+            }
+
+
+
+</script>
+

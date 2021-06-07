@@ -5,13 +5,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
   <meta content="width=device-width; initial-scale=1.0; maximum-scale=1.0;   user-scalable=0;" name="viewport">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="//cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
 
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js" integrity="sha512-zP5W8791v1A6FToy+viyoyUUyjCzx+4K8XZCKzW28AnCoepPNIXecxh9mvGuy3Rt78OzEsU+VCvcObwAMvBAww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js" integrity="sha512-efUTj3HdSPwWJ9gjfGR71X9cvsrthIA78/Fvd/IN+fttQVy7XWkOAXb295j8B3cmm/kFKVxjiNYzKw9IQJHIuQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script> $(document).ready( function () {
     $('#myTable').DataTable();
   } );</script>
@@ -86,7 +90,7 @@
 <!--  <select id="actual_developer">-->
 <!--   <option value="0" selected>Actual Developer</option>-->
 <!--    {% for ac_dev in actual_developer %}-->
-<!--      <option value="{{ac_dev}}">{{ac_dev.first_name}}</option>-->
+<!--      <option value="{{ac_dev}}">{{ac_dev}}</option>-->
 <!--   {% endfor %}-->
 <!--</select>-->
 
@@ -135,12 +139,12 @@
 
         <td>{{project.projects_name}}</td>
 <!--        <td>{{employe.project_start_date}}</td>-->
-<!--        <td>{{employe.project_end_date}}</td>-->
+<!--        <td>{{      employe.project_end_date}}</td>-->
         <td>{{project.project_hours}}</td>
 <!--        <td>{{employe.project_left_hrs}}</td>-->
         {% if request.user.is_superuser %}
         <td>{{project.developer_email}}</td>
-        <td> <a href="/delete/{{ project.id }}">Del</a></td>
+        <td><a href="#" onclick="confirmationBox('{{project.id}}');">Del</a></td>
         <td> <a href="/update/{{ project.id }}">Edit</a></td>
         {% endif %}
       </tr>
@@ -182,10 +186,19 @@
              sortingRecentFiles(cycles,project, developer)
              }
          });
+         $('#actual_developer').change(function(){
+             var developer = $('#developer').val();
+             var actual_developer = $('#actual_developer').val();
+             var cycles = $('#cycles').val();
+             var project = $('#project').val();
+             if (actual_developer != 0) {
+             sortingRecentFiles(cycles,project, developer, actual_developer)
+             }
+         });
       });
 
-      function sortingRecentFiles(billing, project, developer){
-         postdata = {billing:billing, project:project, developer:developer, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+      function sortingRecentFiles(billing, project, developer, actual_developer){
+         postdata = {billing:billing, project:project, developer:developer, actual_developer:actual_developer, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
          $.ajax({
                 url: "/dropdown/",
                 type: "POST",
@@ -199,6 +212,40 @@
                 }
             });
             }
+    function confirmationBox(id){
+    var retVal = confirm("Do you really want to delete it?");
+               if( retVal == true ) {
+               Delete_project(id)
+
+                  return true;
+               } else {
+
+                  return false;
+               }
+
+}
+
+      function Delete_project(id){
+         postdata = {id:id, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+         $.ajax({
+                url: "/deleteproject/",
+                type: "POST",
+                data: postdata,
+                success: function(data) {
+
+                  if (data.status_code == 200){
+                  $.notify(data.status_message,{'globalPosition':'top centre','className': 'success', autoHideDelay: 3000})
+                      setInterval(function(){
+                      window.location.reload();
+                  },1500);
+                    }
+                    else{
+                      $.notify(data.status_message,{'globalPosition':'top centre','className': 'error', autoHideDelay: 3000})
+                    }
+                }
+            });
+            }
+
 
 
 

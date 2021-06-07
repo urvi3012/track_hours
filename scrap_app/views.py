@@ -4,7 +4,8 @@ from .form import EmployeeUserForm,EmployeeProjectForm
 from django.shortcuts import render
 from django.template import loader
 from django.views import generic
-
+from django.contrib import messages
+from django.http import JsonResponse
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse
 from .utils import send_emails,main_function
@@ -36,7 +37,8 @@ class EmployeeRegisterView(generic.CreateView):
 class UserDetailView(generic.ListView):
 	template_name = 'user/user_detail.html'
 	context_object_name = 'user_list'
-	queryset = User.objects.filter(is_superuser = False)	
+	queryset = User.objects.all()
+
 
 class ProjectRegisterView(generic.CreateView):
 	model = Project
@@ -56,18 +58,36 @@ class ProjectRegisterView(generic.CreateView):
 class ProjectDetailView(generic.ListView):
 	template_name = 'projects/project_detail.html'
 	context_object_name = 'project_list'
-	# actual_developer = ['a', 'b']
+	project_name_list = []
+	billing_cycles = []
+	developer_name_list = []
+	# actual_developer = list(Project.objects.values_list('full_name', flat=True).distinct())
 	project_name_list = list(Project.objects.values_list('projects_name', flat=True).distinct())
 	project_name_list.sort()
 	developer_name_list = list(Project.objects.values_list('developer_name', flat=True).distinct())
 	developer_name_list.sort()
 	billing_cycles = list(Project.objects.values_list('Month_Cycle', flat=True).distinct())
 	billing_cycles.reverse()
-	print(billing_cycles)
+
+
+
+
+	# edit
+	actual_developer = list(User.objects.values_list('first_name', 'last_name'))
+	for i in range(len(actual_developer)):
+		actual_developer[i] = actual_developer[i][0]+" "+actual_developer[i][1]
+	actual_developer.sort()
+
+	# edit
+
+
+	# print(billing_cycles)
 	def get_queryset(self):
-		# print(self.request.user.is_staff)
 		if self.request.user.is_superuser:
-			return Project.objects.filter(Month_Cycle = self.billing_cycles[0])
+			if(len(self.billing_cycles) > 0):
+				return Project.objects.filter(Month_Cycle = self.billing_cycles[0])
+			else:
+				return
 		else:
 			# import pdb; pdb.set_trace()
 			return Project.objects.filter(actual_developer = self.request.user.id)
@@ -79,7 +99,7 @@ class ProjectDetailView(generic.ListView):
 		context['billing_cycles'] = self.billing_cycles
 		context['project_name_list'] = self.project_name_list
 		context['developer_name_list'] = self.developer_name_list
-		# context['actual_developer'] = self.actual_developer
+		context['actual_developer'] = self.actual_developer
 		return context
 
 
@@ -93,28 +113,36 @@ class ProjectApi(viewsets.ModelViewSet):
 
 
 def drop_down(request):
-	order_by = ""
+	billing = ""
+	project = ""
+	developer = ""
+	# actual_developer=""
 	if request.method == 'POST':
 		billing = request.POST['billing']
 		project = request.POST['project']
 		developer = request.POST['developer']
+		# actual_developer = request.POST['actual_developer']
 		
-	print(billing)
-	print(project)
-	print(developer)
-	print(type(project))
+	# print(billing)
+	# print(project)
+	# print(developer)
+	# print(type(project))
 	if(project == "0"):
 		project = int(project)
 	if(developer=="0"):
 		developer=int(developer)
 	if(billing == "0"):
 		billing=int(billing)
+	# if (actual_developer == "0"):
+	# 	billing = int(actual_developer)
 	# import pdb; pdb.set_trace()
+	# full_name = actual_developer.first_name + " " + actual_developer.last_name
+	# print(full_name)
 	if project !=0 and developer !=0 and billing!=0:
-		filered_data = Project.objects.filter(Month_Cycle = billing, projects_name = project, developer_name = developer)
+		filered_data = Project.objects.filter(Month_Cycle = billing, projects_name = project, developer_name= developer)
 	elif project==0 and developer!=0 and billing!=0:
 		filered_data = Project.objects.filter(Month_Cycle=billing, developer_name=developer)
-	elif developer==0 and project!=0 and billing!=0:
+	elif developer==0 and			 project!=0 and billing!=0:
 		filered_data = Project.objects.filter(Month_Cycle=billing, projects_name=project)
 		print(filered_data)
 	elif billing==0 and project!=0 and developer!=0:
@@ -136,10 +164,36 @@ def drop_down(request):
 	return HttpResponse(t.render(c, request), content_type='application/javascript')
 
 
-class DeleteObject(generic.DeleteView):
-	success_url = reverse_lazy('project')
-	model = Project
+# class DeleteObject(generic.DeleteView):
+# 	success_url = reverse_lazy('project')
+# 	model = Project
+#
+def Delete_project(request):
+	if request.method == 'POST':
+		id = request.POST['id']
+		# print(id)
+		if id:
+			# print(id)
+			try:
+				Project.objects.filter(id=id).delete()
+				data = {'status_code': 200, 'status_message': 'Project deleted successfully'}
+				messages.success(request, 'Project deleted successfully')
+			except Exception as e:
+				print(e)
+				print ("Not found")
+				data = {'status_code': 200, 'status_message': 'Project not found'}
+				messages.error(request, 'Project not found')
+
+		else:
+			data = {'status_code': 200, 'status_message': 'Project not found'}
+			messages.error(request, 'Project not found')
+	else:
+		data = {'status_code': 400, 'status_message': 'Invalid method'}
+	return JsonResponse(data)
+
 
 class UpdateObject(generic.UpdateView):
 	model = Project
 	fields = ('actual_developer', 'projects_name', 'project_hours', 'developer_name', 'developer_email')
+
+

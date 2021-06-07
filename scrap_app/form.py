@@ -4,12 +4,13 @@ from django.contrib.auth.forms import UserCreationForm
 
 
 class EmployeeUserForm(UserCreationForm):
-	full_name = forms.CharField(max_length=30, required=True, help_text='Optional')
+	first_name = forms.CharField(max_length=200, required=True)
+	last_name = forms.CharField(max_length=200, required=True)
 	email = forms.EmailField(max_length=254, help_text='Required., in the form abc@xyz.com ')
-	is_superuser = forms.BooleanField(initial=False)
+	is_superuser = forms.BooleanField(initial=False, required=False),
 	class Meta:
 		model = User
-		fields = ('username','full_name', 'email', 'password1', 'password2', 'is_superuser')
+		fields = ('username','first_name', 'last_name', 'email', 'password1', 'password2', 'is_superuser')
 		help_texts = {
 			'username': None,
 			'password':None,

@@ -1,5 +1,3 @@
-
-
 import webbrowser
 
 from .models import *
@@ -140,3 +138,4 @@ def main():
         project_object.save()
 
 
+# main()
