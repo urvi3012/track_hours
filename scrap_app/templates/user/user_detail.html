@@ -9,6 +9,14 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js" integrity="sha512-zP5W8791v1A6FToy+viyoyUUyjCzx+4K8XZCKzW28AnCoepPNIXecxh9mvGuy3Rt78OzEsU+VCvcObwAMvBAww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js" integrity="sha512-efUTj3HdSPwWJ9gjfGR71X9cvsrthIA78/Fvd/IN+fttQVy7XWkOAXb295j8B3cmm/kFKVxjiNYzKw9IQJHIuQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
 </head>
 <body>
 <!--{% if request.user.is_superuser %}-->
@@ -38,9 +46,17 @@
 
 
 
-<div class="container">
+<div class="container" >
   <center><h2>Employees</h2>
-  <p>Here you get the details about the Users</p></center><br>
+  <p>Here you get the User Details</p></center><br>
+
+
+    <br>
+  {% if request.user.is_superuser %}
+  <a href = "{% url 'register' %}"><h5>+ Add Employee</h5></a>
+<!--  <p>Here you get the details about the Projects:</p></center>-->
+    <br>
+  {% endif %}
 
 
 <!--<label for="project">Project:</label>-->
@@ -51,16 +67,17 @@
 <!--   {% endfor %}-->
 <!--</select>-->
 
-<label for="emp">Employee:</label>
-  <select id="emp">
-   <option value="0" selected>Employees</option>
-    {% for emp in employee_name_list %}
-      <option value="{{emp}}">{{emp}}</option>
+ <label for="actual_developer">Employee:</label>
+  <select id="actual_developer">
+   <option value="0" selected>Employee</option>
+    {% for ac_dev in actual_developer %}
+      <option value="{{ac_dev.id}}">{{ac_dev.first_name}} {{ac_dev.last_name}}</option>
    {% endfor %}
 </select>
 
+  <br><br>
 
-
+<div id = "emptable">
   <table class="table table-hover">
     <thead>
       <tr>
@@ -79,52 +96,131 @@
         <td>{{user.first_name}}</td>
         <td>{{user.last_name}}</td>
         <td>{{user.email}}</td>
-<td> <a href="/delete/{{ user.id }}">Del</a></td>
-        <td> <a href="/update/{{ user.id }}">Edit</a></td>
+          <td><a href="#" onclick="confirmationBox('{{user.id}}');">Del</a></td>
+        <td> <a href="/updateuser/{{ user.id }}">Update</a></td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+
+</div>
+
 </div>
 
 
-
-
-
 </body>
-</html>
-
 
 
 <script type="text/javascript">
   $(document).ready(function() {
-        $('#project').change(function(){
-             var project = $('#project').val();
-             var developer = $('#developer').val();
-             var cycles = $('#cycles').val();
-             if (project != 0) {
-             sortingRecentFiles(cycles,project, developer)
+<!--         $('#cycles').change(function(){-->
+<!--             var cycles = $('#cycles').val();-->
+<!--             var developer = $('#developer').val();-->
+<!--             var project = $('#project').val();-->
+<!--             var ac_dev= $('#ac_dev.id').val();-->
+<!--             if (cycles != 0) {-->
+<!--             sortingRecentFiles(cycles,project, developer, ac_dev)-->
+<!--             }-->
+<!--         });-->
+<!--          $('#developer').change(function(){-->
+<!--             var developer = $('#developer').val();-->
+<!--             var cycles = $('#cycles').val();-->
+<!--             var project = $('#project').val();-->
+<!--             var ac_dev = $('#ac_dev.id').val();-->
+<!--             if (developer != 0) {-->
+<!--             sortingRecentFiles(cycles,project, developer, ac_dev)-->
+<!--             }-->
+<!--         }); $('#project').change(function(){-->
+<!--             var project = $('#project').val();-->
+<!--             var developer = $('#developer').val();-->
+<!--             var cycles = $('#cycles').val();-->
+<!--             var ac_dev = $('#ac_dev.id').val();-->
+<!--             if (project != 0) {-->
+<!--             sortingRecentFiles(cycles,project, developer, ac_dev)-->
+<!--             }-->
+<!--         });-->
+
+
+     $('#actual_developer').change(function(){
+
+             var actual_developer = $('#actual_developer').val();
+             if (actual_developer  != 0) {
+             sortingRecentFiles(actual_developer)
              }
          });
       });
 
-      function sortingRecentFiles(billing, project, developer){
-         postdata = {project:project, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+      function sortingRecentFiles(actual_developer){
+         postdata = {actual_developer:actual_developer, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+         console.log(actual_developer);
          $.ajax({
-                url: "/dropdown_u/",
+                url: "/dropdown-emp/",
                 type: "POST",
                 data: postdata,
                 success: function(data) {
-                  $.unblockUI()
-                  if (data.status_code == 200){
-                  }
-                  else{
-                  }
+<!--                  $.unblockUI()-->
+<!--                  if (data.status_code == 200){-->
+<!--                  }-->
+<!--                  else{-->
+<!--                  }-->
                 }
             });
             }
 
 
 
+
+
+    function confirmationBox(id){
+    var retVal = confirm("Do you really want to delete it?");
+               if( retVal == true ) {
+               Delete_employee(id)
+
+                  return true;
+               } else {
+
+                  return false;
+               }
+
+}
+
+      function Delete_employee(id){
+         postdata = {id:id, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+         $.ajax({
+                url: "/deleteemployee/",
+                type: "POST",
+                data: postdata,
+                success: function(data) {
+
+                  if (data.status_code == 200){
+                  $.notify(data.status_message,{'globalPosition':'top centre','className': 'success', autoHideDelay: 3000})
+                      setInterval(function(){
+                      window.location.reload();
+                  },1500);
+                    }
+                    else{
+                      $.notify(data.status_message,{'globalPosition':'top centre','className': 'error', autoHideDelay: 3000})
+                    }
+                }
+            });
+            }
+
+function update_project(id){
+         postdata = {id:id, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+         $.ajax({
+                url: "/updateproject/",
+                type: "POST",
+                data: postdata,
+                success: function(data) {
+                }
+            });
+            }
+
+
+
+
 </script>
 
+
+
+</html>

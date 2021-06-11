@@ -1,6 +1,7 @@
 from django.urls import path
 from scrap_app import views
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.decorators import user_passes_test
 
 # app_name = 'scrap_app'
 
@@ -17,10 +18,17 @@ urlpatterns =[
 	path('projectlist/',project),
 	path('dropdown/',views.drop_down, name='drop_down'),
 	# path('dropdown_u/',views.drop_down_user, name='drop_down_user'),
+
+	path('dropdown-emp/', views.drop_down_emp, name='drop_down_emp'),
+
 	path('deleteproject/',views.Delete_project, name='delete'),
-	path('update/<pk>/',views.UpdateObject.as_view(), name='update'),
+	path('updateproject/<id>', views.Update_project, name='update'),
+	path('updateuser/<id>', views.Update_user, name='update-user'),
+	path('updateuserform/', views.Update_user_form, name='update-user-form'),
+
+	path('project_detail_refresh/', views.Refresh.as_view(), name='refresh'),
+
+	path('deleteemployee/',views.Delete_employee, name='delete-emp'),
+	# path('updateprojectform/', views.Update_project, name='update-form'),
 	# path('dropdowndev/', views.drop_down_dev, name='drop_down_dev'),
-	# path('dropdownpro/', views.drop_down_pro, name='drop_down_pro'),
-
-
 ]

@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+{% load static %}
+
+<meta content="noindex, nofollow" name="robots">
+<!-- Include CSS File Here -->
+	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+	<meta content="width=device-width; initial-scale=1.0; maximum-scale=1.0;   user-scalable=0;" name="viewport">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="{%static 'css/emp_register.css'%}" >
+</head>
+<body>
+
+
+<div class="wrapper bg-white">
+    <div class="h2 text-center">Update Project Details</div>
+    <form class="pt-3" method="post"  action = "/updateuserform/" enctype="multipart/form-data">
+
+	{% csrf_token %}
+	<br><!--	<input type="text" name="actual_developer" value="{{ update_pro.actual_developer.first_name }} {{ update_pro.actual_developer.last_name }}"><br>-->
+	<label>User name</label>
+	<input type="text" name="user_user_name" value="{{ update_user.username }}"><br>
+	<br><label>First name</label>
+	<input type="text" name="developer_first_name" value="{{ update_user.first_name }}"><br>
+	<br><label>Last name</label>
+	<input type="text" name="developer_last_name" value="{{ update_user.last_name }}"><br>
+	<br><label>Email</label>
+	<input type="text" name="developer_email" value="{{ update_user.email }}"><br>
+	<br><label>Admin</label>
+	<input type="checkbox" name = "is_superuser" value = "{{update_user.is_superuser}}"{% if update_user.is_superuser %} checked {% endif %}/>
+
+
+	<input type="text" name="user_id" value="{{ update_user.id}}" hidden><br>
+	<button class="btn btn-block text-center my-3" action="submit"> Save Changes  </button>
+
+</form>
+	</div>
+
+<!-- So the current user username will be displayed on the input as a value -->
+</body>
+
+
+
+
+
+<!--<script type="text/javascript">-->
+
+<!--$('.submit_update').on('click', function(){-->
+<!--				csr = "{{ csrf_token }}"-->
+<!--				d = $('.project_detail').serialize()-->
+<!--              $.ajax({-->
+<!--              headers: { "X-CSRFToken": csr },-->
+<!--             url: '/project_detail/',-->
+<!--             method : 'POST',-->
+<!--             data: $('.project_detail').serialize(),-->
+<!--             beforeSend: function() {-->
+<!--              // things to do before submit-->
+<!--             },-->
+<!--             success: function(response) {-->
+
+<!--              alert(response)-->
+<!--              }-->
+<!--              });-->
+<!--  return false;-->
+
+<!--});-->
+<!--</script>-->
+</html>
+

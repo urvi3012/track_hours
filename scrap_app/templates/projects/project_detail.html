@@ -33,7 +33,6 @@
       <a class="navbar-brand" href="#">Protonshub Hour Tracker</a>
     </div>
     <ul class="nav navbar-nav">
-
       <li class="active"><a href="#">Projects</a></li>
 <!--      <li><a href="#">Page 1</a></li>-->
       {% if request.user.is_superuser %}
@@ -41,7 +40,7 @@
       {% endif %}
     </ul>
     <ul class="nav navbar-nav navbar-right">
-      <li><span class="glyphicon glyphicon-user"></span>request.user.id.user_name</li>
+<!--      <li><span class="glyphicon glyphicon-user"></span>"{{request.user.user_name}}"</li>-->
       <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
     </ul>
   </div>
@@ -49,7 +48,7 @@
 
 <div class="container">
   {% if request.user.is_superuser %}
-  <center><h2>Employee Project Details</h2>
+  <center><h2>Employee Project Details for</h2>
   <p>Here you get the details about the Projects:</p></center><br>
   {% endif %}
 {% if not request.user.is_superuser %}
@@ -57,6 +56,27 @@
 <!--  <p>Here you get the details about the Projects:</p></center>-->
     <br>
   {% endif %}
+
+<div  >
+
+
+  {% if request.user.is_superuser %}
+
+  <br>
+
+
+<button type='submit' id = "refresh" name = "refresh" style="float: right"; "> Refresh Data</button>
+
+  <br>
+
+  <a href = "{% url 'project' %}"><h5>+ Add Project</h5></a>
+<!--  <a><h5 align="right">Refresh Data</h5></a>-->
+
+
+<!--  <p>Here you get the details about the Projects:</p></center>-->
+    <br><br>
+  {% endif %}
+</div>
 
 
 
@@ -86,23 +106,20 @@
    {% endfor %}
 </select>
 
-<!--  <label for="actual_developer">Actual Developer:</label>-->
-<!--  <select id="actual_developer">-->
-<!--   <option value="0" selected>Actual Developer</option>-->
-<!--    {% for ac_dev in actual_developer %}-->
-<!--      <option value="{{ac_dev}}">{{ac_dev}}</option>-->
-<!--   {% endfor %}-->
-<!--</select>-->
+  <label for="actual_developer">Actual Developer:</label>
+  <select id="actual_developer">
+   <option value="0" selected>Actual Developer</option>
+    {% for ac_dev in actual_developer %}
+      <option value="{{ac_dev.id}}">{{ac_dev.first_name}} {{ac_dev.last_name}}</option>
+   {% endfor %}
+</select>
 
   {% endif %}
 
 </h5>
-<br>
-  {% if request.user.is_superuser %}
-  <a href = "{% url 'project' %}"><h5>+ Add Project</h5></a>
-<!--  <p>Here you get the details about the Projects:</p></center>-->
-    <br>
-  {% endif %}
+
+  <br><br>
+
 
 
     <div id="project_table">
@@ -145,7 +162,8 @@
         {% if request.user.is_superuser %}
         <td>{{project.developer_email}}</td>
         <td><a href="#" onclick="confirmationBox('{{project.id}}');">Del</a></td>
-        <td> <a href="/update/{{ project.id }}">Edit</a></td>
+<!--        <td> <a href="/update/{{ project.id }}">Edit</a></td>-->
+        <td><a href="/updateproject/{{project.id}}" >Update</a></td>
         {% endif %}
       </tr>
 
@@ -167,30 +185,38 @@
              var cycles = $('#cycles').val();
              var developer = $('#developer').val();
              var project = $('#project').val();
+             var actual_developer= $('#actual_developer').val();
+             console.log(actual_developer);
              if (cycles != 0) {
-             sortingRecentFiles(cycles,project, developer)
+             sortingRecentFiles(cycles,project, developer, actual_developer);
              }
          });
+
           $('#developer').change(function(){
              var developer = $('#developer').val();
              var cycles = $('#cycles').val();
              var project = $('#project').val();
+             var actual_developer = $('#actual_developer').val();
              if (developer != 0) {
-             sortingRecentFiles(cycles,project, developer)
+             sortingRecentFiles(cycles,project, developer, actual_developer);
              }
-         }); $('#project').change(function(){
+          });
+
+         $('#project').change(function(){
              var project = $('#project').val();
              var developer = $('#developer').val();
              var cycles = $('#cycles').val();
+             var actual_developer = $('#actual_developer').val();
              if (project != 0) {
-             sortingRecentFiles(cycles,project, developer)
+             sortingRecentFiles(cycles,project, developer, actual_developer);
              }
          });
+
          $('#actual_developer').change(function(){
              var developer = $('#developer').val();
-             var actual_developer = $('#actual_developer').val();
              var cycles = $('#cycles').val();
              var project = $('#project').val();
+             var actual_developer = $('#actual_developer').val();
              if (actual_developer != 0) {
              sortingRecentFiles(cycles,project, developer, actual_developer)
              }
@@ -199,16 +225,17 @@
 
       function sortingRecentFiles(billing, project, developer, actual_developer){
          postdata = {billing:billing, project:project, developer:developer, actual_developer:actual_developer, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+         console.log(actual_developer);
          $.ajax({
                 url: "/dropdown/",
                 type: "POST",
                 data: postdata,
                 success: function(data) {
-                  $.unblockUI()
-                  if (data.status_code == 200){
-                  }
-                  else{
-                  }
+<!--                  $.unblockUI()-->
+<!--                  if (data.status_code == 200){-->
+<!--                  }-->
+<!--                  else{-->
+<!--                  }-->
                 }
             });
             }
@@ -245,6 +272,33 @@
                 }
             });
             }
+
+function update_project(id){
+         postdata = {id:id, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+         $.ajax({
+                url: "/updateproject/",
+                type: "POST",
+                data: postdata,
+                success: function(data) {
+                }
+            });
+            }
+
+
+$("#refresh").click(function(){ $.ajax({
+    type: "GET",
+    url: "http://localhost:8000/project_detail_refresh/",
+    success: function(data){
+       console.log(data);
+       window.location.href = "http://localhost:8000/project_detail/"
+    }
+  });
+});
+
+
+
+
+
 
 
 

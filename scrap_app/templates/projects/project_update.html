@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+{% load static %}
+
+<meta content="noindex, nofollow" name="robots">
+<!-- Include CSS File Here -->
+	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+	<meta content="width=device-width; initial-scale=1.0; maximum-scale=1.0;   user-scalable=0;" name="viewport">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="{%static 'css/emp_register.css'%}" >
+</head>
+<body>
+
+
+<div class="wrapper bg-white">
+    <div class="h2 text-center">Update Project Details</div>
+<!--    <div class="h4 text-muted text-center pt-2"> Touch to enter details</div>-->
+    <!-- <br><h7> hour and time format :- hh:ss:ms</h7> -->
+    <form class="pt-3" method="post"  class="update_project" enctype="multipart/form-data">
+
+<!--	<button  type="button" class="btn btn-danger" onclick="window.location.href='{% url 'project_detail' %}'">Project Details</button>-->
+	{% csrf_token %}
+<label for="actual_developer">Actual Developer:</label>
+<!--		{{update_pro.actual_developer.id}}-->
+  <select id="actual_developer" name="actual_developer">
+	   <option value="0">Actual Developer</option>
+		{% for ac_dev in actual_developer %}
+		  <option value="{{ac_dev.id}}" {% if ac_dev.id == update_pro.actual_developer.id %}selected{% endif %}>{{ac_dev.first_name}} {{ac_dev.last_name}}</option>
+	   {% endfor %}
+	</select>
+		<br><br>
+<!--	<input type="text" name="actual_developer" value="{{ update_pro.actual_developer.first_name }} {{ update_pro.actual_developer.last_name }}"><br>-->
+	<label>Project name</label>
+	<input type="text" name="projects_name" value="{{ update_pro.projects_name }}"><br>
+	<br><label>Developer name</label>
+		<input type="text" name="developer_name" value="{{ update_pro.developer_name }}"><br>
+	<br><label>Developer email</label>
+	<input type="text" name="developer_email" value="{{ update_pro.developer_email }}"><br>
+	<input type="text" name="project_id" value="{{ update_pro.id}}" hidden><br>
+	<button class="btn btn-block text-center my-3" action="submit"> Save Changes  </button>
+<!--	<input type = "submit" value = "Update">-->
+<!--	<button class="submit_update">Save changes</button>-->
+
+</form>
+	</div>
+
+<!-- So the current user username will be displayed on the input as a value -->
+</body>
+
+<!--<script type="text/javascript">-->
+
+<!--$('.submit_update').on('click', function(){-->
+<!--				csr = "{{ csrf_token }}"-->
+<!--				d = $('.project_detail').serialize()-->
+<!--              $.ajax({-->
+<!--              headers: { "X-CSRFToken": csr },-->
+<!--             url: '/project_detail/',-->
+<!--             method : 'POST',-->
+<!--             data: $('.project_detail').serialize(),-->
+<!--             beforeSend: function() {-->
+<!--              // things to do before submit-->
+<!--             },-->
+<!--             success: function(response) {-->
+
+<!--              alert(response)-->
+<!--              }-->
+<!--              });-->
+<!--  return false;-->
+
+<!--});-->
+<!--</script>-->
+</html>
+

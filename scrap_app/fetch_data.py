@@ -1,5 +1,4 @@
 import webbrowser
-
 from .models import *
 from bs4 import BeautifulSoup, NavigableString, Tag
 from selenium.webdriver.chrome.options import Options
@@ -16,7 +15,7 @@ from selenium.webdriver.support.select import Select
 import time
 
 def main():
-
+    Project.objects.all().delete()
     prefs = {"profile.default_content_setting_values.notifications" : 2}  #block notifications
     chrome_options = Options()
     chrome_options.add_experimental_option("prefs",prefs)
@@ -136,6 +135,10 @@ def main():
 
         project_object = Project.objects.create(developer_name=data[0], developer_email=data[1],projects_name=data[2],project_hours=data[3], Month_Cycle=data[4])
         project_object.save()
+        
+    driver.close()
+
+if __name__ == "__main__":
+    main()
 
 
-# main()

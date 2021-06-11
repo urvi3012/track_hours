@@ -1,0 +1,82 @@
+ <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>Username</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email Id</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in user_list %}
+      <tr>
+        <td>{{user.id}}</td>
+        <td>{{user.username}}</td>
+        <td>{{user.first_name}}</td>
+        <td>{{user.last_name}}</td>
+        <td>{{user.email}}</td>
+          <td><a href="#" onclick="confirmationBox('{{user.id}}');">Del</a></td>
+        <td> <a href="/update/{{ user.id }}">Update</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+
+<script type="text/javascript">
+
+    function confirmationBox(id){
+    var retVal = confirm("Do you really want to delete it?");
+               if( retVal == true ) {
+               Delete_employee(id)
+
+                  return true;
+               } else {
+
+                  return false;
+               }
+
+}
+
+      function Delete_employee(id){
+         postdata = {id:id, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+         $.ajax({
+                url: "/deleteemployee/",
+                type: "POST",
+                data: postdata,
+                success: function(data) {
+
+                  if (data.status_code == 200){
+                  $.notify(data.status_message,{'globalPosition':'top centre','className': 'success', autoHideDelay: 3000})
+                      setInterval(function(){
+                      window.location.reload();
+                  },1500);
+                    }
+                    else{
+                      $.notify(data.status_message,{'globalPosition':'top centre','className': 'error', autoHideDelay: 3000})
+                    }
+                }
+            });
+            }
+
+function update_project(id){
+         postdata = {id:id, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+         $.ajax({
+                url: "/updateproject/",
+                type: "POST",
+                data: postdata,
+                success: function(data) {
+                }
+            });
+            }
+
+
+
+
+</script>
+
+
+
+</html>
