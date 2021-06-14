@@ -18,17 +18,12 @@ urlpatterns =[
 	path('projectlist/',project),
 	path('dropdown/',views.drop_down, name='drop_down'),
 	# path('dropdown_u/',views.drop_down_user, name='drop_down_user'),
-
 	path('dropdown-emp/', views.drop_down_emp, name='drop_down_emp'),
-
 	path('deleteproject/',views.Delete_project, name='delete'),
 	path('updateproject/<id>', views.Update_project, name='update'),
 	path('updateuser/<id>', views.Update_user, name='update-user'),
 	path('updateuserform/', views.Update_user_form, name='update-user-form'),
-
 	path('project_detail_refresh/', views.Refresh.as_view(), name='refresh'),
-
 	path('deleteemployee/',views.Delete_employee, name='delete-emp'),
-	# path('updateprojectform/', views.Update_project, name='update-form'),
-	# path('dropdowndev/', views.drop_down_dev, name='drop_down_dev'),
+
 ]

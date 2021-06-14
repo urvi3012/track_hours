@@ -16,11 +16,12 @@ import time
 
 def main():
     Project.objects.all().delete()
+
     prefs = {"profile.default_content_setting_values.notifications" : 2}  #block notifications
     chrome_options = Options()
     chrome_options.add_experimental_option("prefs",prefs)
     chrome_options.add_argument("--no-sandbox")
-    #chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")
     #chrome_options.add_argument("--disable-setuid-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     #chrome_options.add_argument('--disable-features=VizDisplayCompositor')
@@ -84,30 +85,12 @@ def main():
     soup = BeautifulSoup(driver.page_source, 'lxml')
 
     table = soup.find('div',attrs = {'class':'listing-table'})
-
-    # columns = table.find('div',attrs = {'class':'tHead'})
-    # columns = columns.findAll('div')
-    # for i in columns:
-    #     print(i.text)
-
-    # driver.implicitly_wait(120)
-    # tdata= soup.find('div',attrs = {'class':'tBody'})
-    # tdata
-
-    # records = tdata.findAll('div',attrs = {'class':'tr'})
-    # len(records)
-
-    #tdata
-
     cols = driver.find_element_by_xpath('/html/body/app/div/div[4]/main/core/div/div/div/billing/app-tracked-hours/div[2]/div[1]').text
     cols = cols.split('\n')
     print(cols)
-
     time.sleep(3)
     rows = driver.find_element_by_xpath('/html/body/app/div/div[4]/main/core/div/div/div/billing/app-tracked-hours/div[2]/div[2]').text
     rows = rows.split('\n')
-    #print(rows)
-
     import numpy as np
     arr = np.reshape(rows,(int(len(rows)/4),4))
 
@@ -129,13 +112,10 @@ def main():
 
     # print(arr)
 
-
-
     for data in arr:
-
         project_object = Project.objects.create(developer_name=data[0], developer_email=data[1],projects_name=data[2],project_hours=data[3], Month_Cycle=data[4])
         project_object.save()
-        
+
     driver.close()
 
 if __name__ == "__main__":

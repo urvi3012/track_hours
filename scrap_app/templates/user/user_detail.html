@@ -48,7 +48,8 @@
 
 <div class="container" >
   <center><h2>Employees</h2>
-  <p>Here you get the User Details</p></center><br>
+<!--  <p>Here you get the Employee Details</p>-->
+  </center><br>
 
 
     <br>
@@ -91,12 +92,12 @@
     <tbody>
       {% for user in user_list %}
       <tr>
-        <td>{{user.id}}</td>
+         <td>{{ forloop.counter }}</td>
         <td>{{user.username}}</td>
         <td>{{user.first_name}}</td>
         <td>{{user.last_name}}</td>
         <td>{{user.email}}</td>
-          <td><a href="#" onclick="confirmationBox('{{user.id}}');">Del</a></td>
+          <td><a href="#" onclick="confirmationBox('{{user.id}}');">Delete</a></td>
         <td> <a href="/updateuser/{{ user.id }}">Update</a></td>
       </tr>
       {% endfor %}

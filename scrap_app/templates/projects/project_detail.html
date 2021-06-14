@@ -16,6 +16,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js" integrity="sha512-zP5W8791v1A6FToy+viyoyUUyjCzx+4K8XZCKzW28AnCoepPNIXecxh9mvGuy3Rt78OzEsU+VCvcObwAMvBAww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js" integrity="sha512-efUTj3HdSPwWJ9gjfGR71X9cvsrthIA78/Fvd/IN+fttQVy7XWkOAXb295j8B3cmm/kFKVxjiNYzKw9IQJHIuQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js" integrity="sha512-eYSzo+20ajZMRsjxB6L7eyqo5kuXuS2+wEbbOkpaur+sA2shQameiJiWEzCIDwJqaB0a4a6tCuEvCOBHUg3Skg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script> $(document).ready( function () {
     $('#myTable').DataTable();
   } );</script>
@@ -26,6 +27,12 @@
 <!--  <button  type="button" class="btn btn-success" onclick="window.location.href='{% url 'register' %}'">User Register</button>-->
 <!--{% endif %}-->
 <!--<button  type="button" class="btn btn-primary" onclick="window.location.href='{% url 'logout' %}'">Logout</button>-->
+
+<div id="domMessage" style="display:none;">
+	<img src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" /><br/>
+    Updating Data
+</div>
+
 
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
@@ -49,7 +56,8 @@
 <div class="container">
   {% if request.user.is_superuser %}
   <center><h2>Employee Project Details for</h2>
-  <p>Here you get the details about the Projects:</p></center><br>
+<!--  <p>Here you get the details about the Projects</p>-->
+  </center>
   {% endif %}
 {% if not request.user.is_superuser %}
   <center><h2>Your Project Details</h2></center>
@@ -57,7 +65,7 @@
     <br>
   {% endif %}
 
-<div  >
+<div>
 
 
   {% if request.user.is_superuser %}
@@ -74,7 +82,7 @@
 
 
 <!--  <p>Here you get the details about the Projects:</p></center>-->
-    <br><br>
+    <br>
   {% endif %}
 </div>
 
@@ -161,7 +169,7 @@
 <!--        <td>{{employe.project_left_hrs}}</td>-->
         {% if request.user.is_superuser %}
         <td>{{project.developer_email}}</td>
-        <td><a href="#" onclick="confirmationBox('{{project.id}}');">Del</a></td>
+        <td><a href="#" onclick="confirmationBox('{{project.id}}');">Delete</a></td>
 <!--        <td> <a href="/update/{{ project.id }}">Edit</a></td>-->
         <td><a href="/updateproject/{{project.id}}" >Update</a></td>
         {% endif %}
@@ -285,12 +293,24 @@ function update_project(id){
             }
 
 
-$("#refresh").click(function(){ $.ajax({
+$("#refresh").click(function(){
+  $.blockUI({
+		css: {
+			border: '5px solid #3c8dbc',
+			borderRadius: '5px',
+			padding: '20px 0'
+
+		},
+        message: $('#domMessage')
+    });
+
+   $.ajax({
     type: "GET",
-    url: "http://localhost:8000/project_detail_refresh/",
+    url: "/project_detail_refresh/",
     success: function(data){
        console.log(data);
-       window.location.href = "http://localhost:8000/project_detail/"
+       $.unblockUI();
+       window.location.reload();
     }
   });
 });

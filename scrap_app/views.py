@@ -50,11 +50,11 @@ class UserDetailView(generic.ListView):
 
 	template_name = 'user/user_detail.html'
 	context_object_name = 'user_list'
-	queryset = User.objects.all()
+	queryset = User.objects.filter(is_superuser = 'False').order_by('first_name')
 
 
 	def get_context_data(self, **kwargs):
-		self.actual_developer = User.objects.all().order_by('first_name')
+		self.actual_developer = User.objects.filter(is_superuser = 'False').order_by('first_name')
 		context = super(UserDetailView, self).get_context_data(**kwargs)
 		context['actual_developer'] = self.actual_developer
 		return context
@@ -89,7 +89,7 @@ class ProjectDetailView(generic.ListView):
 	developer_name_list.sort()
 	billing_cycles = list(Project.objects.values_list('Month_Cycle', flat=True).distinct())
 	billing_cycles.reverse()
-	actual_developer = User.objects.all().order_by('first_name')
+	actual_developer = User.objects.filter(is_superuser = 'False').order_by('first_name')
 	# actual_developer = list(Project.objects.values_list('full_name', flat=True).distinct())
 
 	def get_queryset(self):
@@ -113,7 +113,7 @@ class ProjectDetailView(generic.ListView):
 		self.developer_name_list.sort()
 		self.billing_cycles = list(Project.objects.values_list('Month_Cycle', flat=True).distinct())
 		self.billing_cycles.reverse()
-		self.actual_developer = User.objects.all().order_by('first_name')
+		self.actual_developer = User.objects.filter(is_superuser = False).order_by('first_name')
 		context = super(ProjectDetailView, self).get_context_data(**kwargs)
 		context['billing_cycles'] = self.billing_cycles
 		context['project_name_list'] = self.project_name_list
