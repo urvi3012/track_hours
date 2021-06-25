@@ -16,7 +16,6 @@ import time
 
 def main():
     Project.objects.all().delete()
-
     prefs = {"profile.default_content_setting_values.notifications" : 2}  #block notifications
     chrome_options = Options()
     chrome_options.add_experimental_option("prefs",prefs)
@@ -96,7 +95,7 @@ def main():
 
     billing_cycles = driver.find_element_by_xpath('/html/body/app/div/div[4]/main/core/div/div/div/billing/app-tracked-hours/div[1]/div[1]/select').text
     billing_cycles = billing_cycles.split('\n')
-    # print(billing_cycles)
+    print(billing_cycles)
 
     arr=[]
     for i in range(1,len(billing_cycles)+1):
