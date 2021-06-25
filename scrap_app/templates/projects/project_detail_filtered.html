@@ -16,6 +16,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js" integrity="sha512-zP5W8791v1A6FToy+viyoyUUyjCzx+4K8XZCKzW28AnCoepPNIXecxh9mvGuy3Rt78OzEsU+VCvcObwAMvBAww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js" integrity="sha512-efUTj3HdSPwWJ9gjfGR71X9cvsrthIA78/Fvd/IN+fttQVy7XWkOAXb295j8B3cmm/kFKVxjiNYzKw9IQJHIuQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js" integrity="sha512-eYSzo+20ajZMRsjxB6L7eyqo5kuXuS2+wEbbOkpaur+sA2shQameiJiWEzCIDwJqaB0a4a6tCuEvCOBHUg3Skg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script> $(document).ready( function () {
     $('#myTable').DataTable();
@@ -30,7 +31,7 @@
         <th>Screen Developer Name</th>
         <th>Project Name</th>
         <th>Project Hours</th>
-<!--        <th>Project Start Date</th>-->
+        <th>Expected Cycle Hours</th>
 <!--        <th>Project End Date</th>-->
 <!--        <th>Expected Hours</th>-->
         <th>Email</th>
@@ -40,8 +41,13 @@
     </thead>
     <tbody>
       {% for project in project_list %}
-      <tr>
-        <!-- <td>{{employe.employee.id}}</td> -->
+         {% if project.cycle_hour_diff <= 28800 %}
+      <tr bgcolor="yellowgreen">
+        {% elif project.cycle_hour_diff > 28800 and project.cycle_hour_diff <= 57600 %}
+      <tr bgcolor="yellow">
+        {% else %}
+      <tr bgcolor="salmon">
+        {% endif %}
         <td>{{ forloop.counter }}</td>
         <td>{{project.actual_developer.first_name}} {{project.actual_developer.last_name}}</td>
         <td>{{project.developer_name}}</td>
@@ -49,9 +55,10 @@
 <!--        <td>{{employe.project_start_date}}</td>-->
 <!--        <td>{{employe.project_end_date}}</td>-->
         <td>{{project.project_hours}}</td>
+          <td>{{project.expected_cycle_hours}}</td>
 <!--        <td>{{employe.project_left_hrs}}</td>-->
         <td>{{project.developer_email}}</td>
-        <td><a href="#" onclick="confirmationBox('{{project.id}}');">Del</a></td>
+        <td><a href="#" onclick="confirmationBox('{{project.id}}');">Delete</a></td>
          <td><a href="/updateproject/{{project.id}}" >Update</a></td>
       </tr>
 
@@ -108,11 +115,11 @@
                 type: "POST",
                 data: postdata,
                 success: function(data) {
-                  $.unblockUI()
-                  if (data.status_code == 200){
-                  }
-                  else{
-                  }
+<!--                  $.unblockUI()-->
+<!--                  if (data.status_code == 200){-->
+<!--                  }-->
+<!--                  else{-->
+<!--                  }-->
                 }
             });
             }
@@ -163,7 +170,27 @@ function update_project(id){
             }
 
 
+$("#refresh").click(function(){
+  $.blockUI({
+		css: {
+			border: '5px solid #3c8dbc',
+			borderRadius: '5px',
+			padding: '20px 0'
 
+		},
+        message: $('#domMessage')
+    });
+
+   $.ajax({
+    type: "GET",
+    url: "/project_detail_refresh/",
+    success: function(data){
+       console.log(data);
+       $.unblockUI();
+       window.location.reload();
+    }
+  });
+});
 
 </script>
 

@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from .models import User,Project
+from .models import User,Project, Holidays
 from .form import EmployeeUserForm,EmployeeProjectForm, UpdateEmpForm, EmployeeUpdateForm
 from django.shortcuts import render
 from django.template import loader
@@ -8,8 +8,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse,HttpResponseRedirect
-from .utils import send_emails,main_function
-# from user_addition import add_user
+from .utils import send_emails
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template import Context
@@ -21,7 +20,7 @@ from .pagination import StandardResultsSetPagination
 from django.contrib.auth.mixins import UserPassesTestMixin
 
 
-from scrap_app.fetch_data import main
+from scrap_app.fetch_data import main, get_expected_hours
 
 class Refresh(APIView):
 	def get(self, request):
@@ -132,15 +131,18 @@ class ProjectApi(viewsets.ModelViewSet):
 
 
 def drop_down(request):
-	billing = ""
-	project = ""
-	developer = ""
-	ac_dev=""
+	billing = "0"
+	project = "0"
+	developer = "0"
+	ac_dev="0"
 	if request.method == 'POST':
 		billing = request.POST['billing']
-		project = request.POST['project']
-		developer = request.POST['developer']
-		ac_dev = request.POST['actual_developer']
+		if(request.POST['project']):
+			project = request.POST['project']
+		if(request.POST['developer']):
+			developer = request.POST['developer']
+		if(request.POST['actual_developer']):
+			ac_dev = request.POST['actual_developer']
 
 
 	if(project == "0"):
@@ -184,7 +186,6 @@ def drop_down(request):
 		filered_data = Project.objects.filter(projects_name=project)
 	elif billing!=0:
 		filered_data = Project.objects.filter(Month_Cycle=billing)
-		# print(filered_data)
 	elif developer!=0:
 		filered_data = Project.objects.filter(developer_name=developer)
 	elif ac_dev!=0:
@@ -247,23 +248,8 @@ def Delete_employee(request):
 	return JsonResponse(data)
 
 
-# def ProjectUpdate(request):
-# 	import pdb; pdb.set_trace()
-# 	current_project = request.projects_name
-# 	if request.method == 'POST':
-# 		actual_developer = request.POST.get('actual_developer', '').strip()
-# 		projects_name= request.POST.get('projects_name', '').strip()
-# 		developer_name = request.POST.get('developer_name', '').strip()
-# 		developer_email = request.POST.get('developer_email', '').strip()
-# 		Project.objects.filter(pk=current_project.pk).update(actual_developer=actual_developer, projects_name=projects_name, developer_name=developer_name, developer_email=developer_email)
-# 		return HttpResponse('Project Updated')
-# 	else:
-# 	  	return render(request, 'project.html', {'current_project': current_project})
-#
-
-
 def Update_project(request, id):
-	actual_developer = User.objects.all().order_by('first_name')
+	actual_developer = User.objects.filter(is_superuser=False).order_by('first_name')
 	if id:
 		try:
 			update_pro = Project.objects.get(id=id)
@@ -295,20 +281,6 @@ def Update_project(request, id):
 	print("end")
 	return JsonResponse(data)
 
-# def save_after_update(request):
-# 	current_project = request.update_pro
-# 	if request.method == 'POST':
-# 		project_id = request.POST.get('project_id', None).strip()
-# 		if project_id:
-# 			actual_developer = request.POST.get('actual_developer', '').strip()
-# 			projects_name= request.POST.get('projects_name', '').strip()
-# 			developer_name = request.POST.get('developer_name', '').strip()
-# 			developer_email = request.POST.get('developer_email', '').strip()
-# 			Project.objects.filter(pk=project_id).update(actual_developer=actual_developer, projects_name=projects_name, developer_name=developer_name, developer_email=developer_email)
-# 			return HttpResponse('Project Updated')
-# 	else:
-# 		return render(request, 'project.html', {'current_project': current_project})
-
 
 def drop_down_emp(request):
 	ac_dev=""
@@ -332,7 +304,6 @@ def drop_down_emp(request):
 
 
 def Update_user(request, id):
-	# actual_developer = User.objects.all().order_by('first_name')
 	if id:
 		try:
 			update_user = User.objects.get(id=id)
@@ -356,9 +327,8 @@ def Update_user(request, id):
 	else:
 		data = {'status_code': 200, 'status_message': 'User not found'}
 		messages.error(request, 'User not found')
-
-	# print("end")
 	return JsonResponse(data)
+
 
 def Update_user_form(request):
 	data = {'status_code': 200, 'status_message': 'user not found'}
@@ -368,9 +338,7 @@ def Update_user_form(request):
 		developer_first_name = request.POST['developer_first_name']
 		developer_last_name = request.POST['developer_last_name']
 		developer_email = request.POST['developer_email']
-		# is_super = request.POST['is_superuser']
 		is_super = request.POST.get('is_superuser', False)
-		# print(type(user_id), "type")
 		if user_id:
 			try:
 				user = User.objects.get(username=user_user_name)
@@ -399,3 +367,22 @@ def Update_user_form(request):
 					data = {'status_code': 200, 'status_message': 'User not found'}
 
 	return JsonResponse(data)
+
+
+import datetime
+
+def Save_Holidays(request):
+	# import pdb; pdb.set_trace()
+	if request.method == 'POST':
+		dates = request.POST['dates']
+	dates= dates.split(',')
+	print(dates)
+	for i in dates:
+		i = datetime.datetime.strptime(i, "%d-%m-%Y").strftime("%Y-%m-%d")
+		if not Holidays.objects.filter(holidays=i).exists():
+			holiday_obj = Holidays.objects.create(holidays=i)
+			holiday_obj.save()
+	get_expected_hours()
+
+	return redirect('project_detail')
+

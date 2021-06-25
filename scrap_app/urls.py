@@ -25,5 +25,7 @@ urlpatterns =[
 	path('updateuserform/', views.Update_user_form, name='update-user-form'),
 	path('project_detail_refresh/', views.Refresh.as_view(), name='refresh'),
 	path('deleteemployee/',views.Delete_employee, name='delete-emp'),
+	path('saveholidays/',views.Save_Holidays, name='save-hol'),
+
 
 ]

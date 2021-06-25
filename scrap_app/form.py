@@ -43,5 +43,5 @@ class EmployeeProjectForm(forms.ModelForm):
 class UpdateEmpForm(forms.ModelForm):
 	class Meta:
 		model = Project
-		exclude = ('actual_developer', 'Month_Cycle', 'mailing_hrs','project_working_hrs', 'project_hours', 'project_left_hrs')
+		exclude = ('actual_developer', 'Month_Cycle', 'mailing_hrs','project_working_hrs', 'project_hours', 'project_left_hrs', 'expected_daily_hours', 'expected_cycle_hours', 'cycle_hour_diff')
 

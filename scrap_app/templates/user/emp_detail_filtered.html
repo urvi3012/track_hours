@@ -17,7 +17,7 @@
         <td>{{user.last_name}}</td>
         <td>{{user.email}}</td>
           <td><a href="#" onclick="confirmationBox('{{user.id}}');">Del</a></td>
-        <td> <a href="/update/{{ user.id }}">Update</a></td>
+         <td> <a href="/updateuser/{{ user.id }}">Update</a></td>
       </tr>
       {% endfor %}
     </tbody>
@@ -61,6 +61,16 @@
             });
             }
 
+function update_project(id){
+         postdata = {id:id, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+         $.ajax({
+                url: "/updateproject/",
+                type: "POST",
+                data: postdata,
+                success: function(data) {
+                }
+            });
+            }
 function update_project(id){
          postdata = {id:id, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
          $.ajax({

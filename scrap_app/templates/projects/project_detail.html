@@ -2,31 +2,30 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
   <title>Project Details</title>
+  {% load static %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-
   <meta content="width=device-width; initial-scale=1.0; maximum-scale=1.0;   user-scalable=0;" name="viewport">
+  <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="//cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
-
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" ></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" ></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js" integrity="sha512-zP5W8791v1A6FToy+viyoyUUyjCzx+4K8XZCKzW28AnCoepPNIXecxh9mvGuy3Rt78OzEsU+VCvcObwAMvBAww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js" integrity="sha512-efUTj3HdSPwWJ9gjfGR71X9cvsrthIA78/Fvd/IN+fttQVy7XWkOAXb295j8B3cmm/kFKVxjiNYzKw9IQJHIuQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js" integrity="sha512-eYSzo+20ajZMRsjxB6L7eyqo5kuXuS2+wEbbOkpaur+sA2shQameiJiWEzCIDwJqaB0a4a6tCuEvCOBHUg3Skg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+  <link rel="stylesheet" href="{%static 'css/project_details.css'%}" >
+
   <script> $(document).ready( function () {
     $('#myTable').DataTable();
   } );</script>
+
 </head>
 <body>
-<!--{% if request.user.is_superuser %}-->
-<!--  <button  type="button" class="btn btn-danger" onclick="window.location.href='{% url 'project' %}'">Add Project</button >-->
-<!--  <button  type="button" class="btn btn-success" onclick="window.location.href='{% url 'register' %}'">User Register</button>-->
-<!--{% endif %}-->
-<!--<button  type="button" class="btn btn-primary" onclick="window.location.href='{% url 'logout' %}'">Logout</button>-->
 
 <div id="domMessage" style="display:none;">
 	<img src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" /><br/>
@@ -41,21 +40,43 @@
     </div>
     <ul class="nav navbar-nav">
       <li class="active"><a href="#">Projects</a></li>
-<!--      <li><a href="#">Page 1</a></li>-->
+
       {% if request.user.is_superuser %}
       <li><a href="{% url 'user_detail' %}">Employees</a></li>
+
       {% endif %}
     </ul>
     <ul class="nav navbar-nav navbar-right">
-<!--      <li><span class="glyphicon glyphicon-user"></span>"{{request.user.user_name}}"</li>-->
       <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
     </ul>
   </div>
 </nav>
 
+
+
+
+
+
+
 <div class="container">
-  {% if request.user.is_superuser %}
-  <center><h2>Employee Project Details for</h2>
+ {% if request.user.is_superuser %}
+<label>Holidays: </label>
+
+  <div class="input-group">
+    <div class="date-container">
+
+  <input type="text" class="form-control date" placeholder="Pick the holidays" id = 'dates'>
+
+  <span class="input-group-btn">
+    <button class="btn btn-default" type="submit" id="submit" onClick="display()">Save Holidays !</button>
+  </span>
+</div><!-- /input-group -->
+
+
+</div>
+
+
+  <center><h2>Project Details</h2>
 <!--  <p>Here you get the details about the Projects</p>-->
   </center>
   {% endif %}
@@ -68,12 +89,13 @@
 <div>
 
 
+
   {% if request.user.is_superuser %}
 
   <br>
 
 
-<button type='submit' id = "refresh" name = "refresh" style="float: right"; "> Refresh Data</button>
+<button type='submit' id = "refresh" name = "refresh" style="float: right" "> Refresh Data</button>
 
   <br>
 
@@ -88,7 +110,7 @@
 
 
 
-    {% if request.user.is_superuser %}
+ {% if request.user.is_superuser %}
 <h5>
 <label for="cycles">Billing Cycle:</label>
   <select id="cycles">
@@ -106,6 +128,7 @@
    {% endfor %}
 </select>
 
+
 <label for="developer">Developer:</label>
   <select id="developer">
    <option value="0" selected>Developers</option>
@@ -113,6 +136,7 @@
       <option value="{{developer}}">{{developer}}</option>
    {% endfor %}
 </select>
+
 
   <label for="actual_developer">Actual Developer:</label>
   <select id="actual_developer">
@@ -141,9 +165,13 @@
         {% endif %}
         <th>Project Name</th>
         <th>Project Hours</th>
+        <th>Expected Cycle Hours</th>
 <!--        <th>Project Start Date</th>-->
 <!--        <th>Project End Date</th>-->
 <!--        <th>Expected Hours</th>-->
+        {% if not request.user.is_superuser %}
+         <th>Month Cycle</th>
+        {% endif %}
         {% if request.user.is_superuser %}
         <th>Email</th>
         {% endif %}
@@ -153,7 +181,15 @@
     </thead>
     <tbody>
       {% for project in project_list %}
-      <tr>
+
+      {% if project.cycle_hour_diff <= 28800 %}
+      <tr bgcolor="yellowgreen">
+        {% elif project.cycle_hour_diff > 28800 and project.cycle_hour_diff <= 57600 %}
+      <tr bgcolor="yellow">
+        {% else %}
+      <tr bgcolor="salmon">
+        {% endif %}
+
         <td>{{ forloop.counter }}</td>
         <!-- <td>{{employe.employee.id}}</td> -->
         {% if request.user.is_superuser %}
@@ -163,10 +199,14 @@
         {% endif %}
 
         <td>{{project.projects_name}}</td>
-<!--        <td>{{employe.project_start_date}}</td>-->
-<!--        <td>{{      employe.project_end_date}}</td>-->
         <td>{{project.project_hours}}</td>
-<!--        <td>{{employe.project_left_hrs}}</td>-->
+        <td>{{project.expected_cycle_hours}}</td>
+
+
+
+        {% if not request.user.is_superuser %}
+         <td>{{project.Month_Cycle}}</td>
+        {% endif %}
         {% if request.user.is_superuser %}
         <td>{{project.developer_email}}</td>
         <td><a href="#" onclick="confirmationBox('{{project.id}}');">Delete</a></td>
@@ -188,7 +228,16 @@
 
 
 <script type="text/javascript">
+
   $(document).ready(function() {
+
+
+        $('.date').datepicker({
+          multidate: true,
+            format: 'dd-mm-yyyy'
+        });
+
+
          $('#cycles').change(function(){
              var cycles = $('#cycles').val();
              var developer = $('#developer').val();
@@ -239,11 +288,6 @@
                 type: "POST",
                 data: postdata,
                 success: function(data) {
-<!--                  $.unblockUI()-->
-<!--                  if (data.status_code == 200){-->
-<!--                  }-->
-<!--                  else{-->
-<!--                  }-->
                 }
             });
             }
@@ -292,6 +336,22 @@ function update_project(id){
             });
             }
 
+function display()
+        {
+              dates=document.getElementById("dates").innerHTML = document.getElementById("dates").value;
+              console.log(dates);
+
+              postdata = {dates:dates, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+              $.ajax({
+                url: "/saveholidays/",
+                type: "POST",
+                data: postdata,
+                success: function(data) {
+                }
+            });
+            document.getElementById("dates").value = "";
+        }
+
 
 $("#refresh").click(function(){
   $.blockUI({
@@ -314,12 +374,6 @@ $("#refresh").click(function(){
     }
   });
 });
-
-
-
-
-
-
 
 
 
